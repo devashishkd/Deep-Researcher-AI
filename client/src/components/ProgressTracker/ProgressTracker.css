@@ -1,0 +1,289 @@
+/* ProgressTracker Component Styles */
+
+.progress-tracker {
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+  animation: fadeInUp 0.4s ease both;
+}
+
+.progress-tracker__header {
+  margin-bottom: var(--space-6);
+}
+
+.progress-tracker__query {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  line-height: 1.4;
+}
+
+.progress-tracker__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.progress-tracker__overall-bar {
+  margin-bottom: var(--space-6);
+}
+
+.progress-tracker__overall-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-2);
+  font-size: 13px;
+}
+
+.progress-tracker__overall-pct {
+  font-weight: 700;
+  color: var(--accent-light);
+}
+
+/* Steps */
+.progress-tracker__steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.progress-tracker__step {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-base);
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-tracker__step--active {
+  border-color: var(--border-normal);
+  background: var(--bg-card-hover);
+}
+
+.progress-tracker__step--active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--gradient-accent);
+}
+
+.progress-tracker__step--done {
+  border-color: rgba(16, 185, 129, 0.15);
+  background: rgba(16, 185, 129, 0.03);
+}
+
+.progress-tracker__step--done::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--emerald);
+}
+
+.progress-tracker__step--error {
+  border-color: rgba(244, 63, 94, 0.2);
+}
+
+.progress-tracker__step--error::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--rose);
+}
+
+.progress-tracker__step-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition-base);
+}
+
+.progress-tracker__step--pending .progress-tracker__step-icon {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+}
+
+.progress-tracker__step--active .progress-tracker__step-icon {
+  background: var(--accent-bg);
+  border: 1px solid var(--border-normal);
+  color: var(--accent-light);
+}
+
+.progress-tracker__step--done .progress-tracker__step-icon {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--emerald);
+}
+
+.progress-tracker__step--error .progress-tracker__step-icon {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--rose);
+}
+
+.progress-tracker__step-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.progress-tracker__step-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.progress-tracker__step--pending .progress-tracker__step-label {
+  color: var(--text-muted);
+}
+
+.progress-tracker__step-desc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.progress-tracker__step--pending .progress-tracker__step-desc {
+  color: var(--text-muted);
+}
+
+.progress-tracker__step-dots {
+  align-self: center;
+}
+
+/* Stats grid */
+.progress-tracker__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+  animation: fadeInUp 0.4s ease both;
+}
+
+.progress-tracker__stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: center;
+}
+
+.progress-tracker__stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent-light);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.progress-tracker__stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* Live messages */
+.progress-tracker__log {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  max-height: 180px;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+
+.progress-tracker__log-entry {
+  display: flex;
+  gap: var(--space-2);
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  animation: slide-in-right 0.2s ease both;
+}
+
+.progress-tracker__log-entry:last-child {
+  border-bottom: none;
+  color: var(--text-primary);
+}
+
+.progress-tracker__log-time {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.progress-tracker__log-msg {
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.progress-tracker__log-entry:last-child .progress-tracker__log-msg {
+  color: var(--accent-light);
+}
+
+/* Confidence indicator */
+.progress-tracker__confidence {
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  animation: fadeInUp 0.3s ease both;
+}
+
+.progress-tracker__confidence-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--emerald);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.progress-tracker__confidence-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.progress-tracker__confidence-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--bg-surface);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-tracker__confidence-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--emerald), #34d399);
+  border-radius: var(--radius-full);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
