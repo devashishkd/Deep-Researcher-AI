@@ -8,6 +8,7 @@ import './Home.css';
 
 export const Home = () => {
   const {
+    query,
     sessionId,
     status,
     steps,
@@ -30,11 +31,10 @@ export const Home = () => {
   const isResearching =
     status &&
     status !== 'completed' &&
-    status !== 'error' &&
-    status !== 'pending';
+    status !== 'error';
 
-  const showSearch = !status || status === 'pending';
-  const showProgress = isResearching || (status === 'pending' && sessionId);
+  const showSearch = !status && !isLoading;
+  const showProgress = isLoading || isResearching;
   const showReport = status === 'completed' && report;
 
   return (
@@ -80,25 +80,17 @@ export const Home = () => {
         <div className="container">
 
           {/* Search view */}
-          {showSearch && !isLoading && (
+          {showSearch && (
             <div className="home__section">
               <SearchPanel onSubmit={handleSubmit} isLoading={isLoading} />
             </div>
           )}
 
-          {/* Loading transition */}
-          {isLoading && (
-            <div className="home__starting animate-fade-in">
-              <div className="spinner" style={{ width: 32, height: 32 }} />
-              <p>Starting your research session...</p>
-            </div>
-          )}
-
           {/* Progress view */}
-          {(showProgress) && sessionId && (
+          {showProgress && (
             <div className="home__section">
               <ProgressTracker
-                query={plan?.mainQuestion || ''}
+                query={plan?.mainQuestion || query || ''}
                 steps={steps}
                 plan={plan}
                 liveMessages={liveMessages}

@@ -49,28 +49,42 @@ export const geminiService = {
     throw new Error(`Gemini failed after 3 attempts: ${lastError?.message}`);
   },
 
-  /**
-   * Parse JSON from Gemini response (strips markdown fences)
-   */
   generateJSON: async <T>(prompt: string): Promise<T> => {
-    const raw = await geminiService.generate(
-      prompt + '\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown fences, no explanation.'
-    );
-    const cleaned = raw
-      .replace(/^```json\s*/i, '')
-      .replace(/^```\s*/i, '')
-      .replace(/```\s*$/i, '')
-      .trim();
+    let lastError: Error | null = null;
+    
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        const raw = await geminiService.generate(
+          prompt + '\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown fences, no explanation.'
+        );
+        
+        // Clean up markdown fences
+        let cleaned = raw
+          .replace(/^```(?:json)?\s*/i, '')
+          .replace(/```\s*$/i, '')
+          .trim();
+          
+        // Fix common LLM JSON issue: trailing commas
+        cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
 
-    try {
-      return JSON.parse(cleaned) as T;
-    } catch {
-      // Try to extract JSON from the response
-      const jsonMatch = cleaned.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]) as T;
+        try {
+          return JSON.parse(cleaned) as T;
+        } catch {
+          // Try to extract JSON from the response if it's mixed with text
+          const jsonMatch = cleaned.match(/\{[\s\S]*\}|\[[\s\S]*\]/);
+          if (jsonMatch) {
+            return JSON.parse(jsonMatch[0]) as T;
+          }
+          throw new Error(`No JSON object/array found in response: ${cleaned.slice(0, 200)}...`);
+        }
+      } catch (err: unknown) {
+        lastError = err as Error;
+        logger.warn(`Gemini JSON parse attempt ${attempt} failed: ${lastError.message}`);
+        if (attempt < 3) {
+          await new Promise((r) => setTimeout(r, attempt * 2000));
+        }
       }
-      throw new Error(`Failed to parse Gemini JSON response: ${cleaned.slice(0, 200)}`);
     }
+    throw new Error(`Failed to parse Gemini JSON response after 3 attempts: ${lastError?.message}`);
   },
 };

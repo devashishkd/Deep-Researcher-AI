@@ -53,6 +53,8 @@ export const useResearch = () => {
   } | null>(null);
   const [confidenceScore, setConfidenceScore] = useState<number | null>(null);
 
+  const [query, setQuery] = useState<string>('');
+
   const updateStep = useCallback(
     (stepId: string, updates: Partial<ResearchStep>) => {
       setSteps((prev) =>
@@ -205,7 +207,7 @@ export const useResearch = () => {
   );
 
   const startResearch = useCallback(
-    async (query: string, depth: ResearchDepth) => {
+    async (searchQuery: string, depth: ResearchDepth) => {
       setIsLoading(true);
       setError(null);
       setReport(null);
@@ -214,12 +216,13 @@ export const useResearch = () => {
       setSearchStats(null);
       setConfidenceScore(null);
       setLiveMessages([]);
+      setQuery(searchQuery);
       setSteps(
         INITIAL_STEPS.map((s) => ({ ...s, status: 'pending' }))
       );
 
       try {
-        const { sessionId: id } = await api.startResearch(query, depth);
+        const { sessionId: id } = await api.startResearch(searchQuery, depth);
         setSessionId(id);
         setStatus('pending');
       } catch (err) {
@@ -245,9 +248,11 @@ export const useResearch = () => {
     setLiveMessages([]);
     setSearchStats(null);
     setConfidenceScore(null);
+    setQuery('');
   }, [disconnect]);
 
   return {
+    query,
     sessionId,
     status,
     steps,
