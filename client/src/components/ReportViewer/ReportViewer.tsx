@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Download, RotateCcw, Share2, BookMarked, ShieldCheck } from 'lucide-react';
+import { Download, RotateCcw, BookMarked, ShieldCheck } from 'lucide-react';
 import { ResearchReport } from '../../types/index.js';
 import { FactBadge } from '../FactBadge/FactBadge.js';
 import { SourceCard } from '../SourceCard/SourceCard.js';

@@ -1,7 +1,7 @@
 // ============================================================
 // useResearch — Main research session state hook
 // ============================================================
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { api } from '../utils/api.js';
 import { useSSE } from './useSSE.js';
 import {

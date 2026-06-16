@@ -1,7 +1,7 @@
 // ============================================================
 // LangGraph Research Agent Graph
 // ============================================================
-import { StateGraph, END } from '@langchain/langgraph';
+import { StateGraph, START, END } from '@langchain/langgraph';
 import { ResearchStateAnnotation, ResearchState } from './state.js';
 import { plannerNode } from './nodes/planner.js';
 import { searcherNode } from './nodes/searcher.js';
@@ -17,28 +17,28 @@ import { logger } from '../utils/logger.js';
 // ============================================================
 
 const createResearchGraph = (startTime: number) => {
-  const graph = new StateGraph(ResearchStateAnnotation);
+  const graph = new StateGraph(ResearchStateAnnotation)
 
   // --- Add all nodes ---
-  graph.addNode('planner', plannerNode);
-  graph.addNode('searcher', searcherNode);
-  graph.addNode('scraper', scraperNode);
-  graph.addNode('factChecker', factCheckerNode);
-  graph.addNode('synthesizer', (state: ResearchState) =>
+  .addNode('planner', plannerNode)
+  .addNode('searcher', searcherNode)
+  .addNode('scraper', scraperNode)
+  .addNode('factChecker', factCheckerNode)
+  .addNode('synthesizer', (state: ResearchState) =>
     synthesizerNode(state, startTime)
-  );
+  )
 
   // --- Define edges ---
 
   // Linear: START → planner → searcher → scraper → factChecker
-  graph.addEdge('__start__', 'planner');
-  graph.addEdge('planner', 'searcher');
-  graph.addEdge('searcher', 'scraper');
-  graph.addEdge('scraper', 'factChecker');
+  .addEdge(START, 'planner')
+  .addEdge('planner', 'searcher')
+  .addEdge('searcher', 'scraper')
+  .addEdge('scraper', 'factChecker')
 
   // CONDITIONAL EDGE: factChecker → (synthesizer | searcher)
   // This is the key agentic loop!
-  graph.addConditionalEdges(
+  .addConditionalEdges(
     'factChecker',
     (state: ResearchState) => {
       if (state.needsMoreResearch && state.additionalQueries.length > 0) {
@@ -51,10 +51,10 @@ const createResearchGraph = (startTime: number) => {
       searcher: 'searcher',
       synthesizer: 'synthesizer',
     }
-  );
+  )
 
   // End after synthesis
-  graph.addEdge('synthesizer', END);
+  .addEdge('synthesizer', END);
 
   return graph.compile();
 };

@@ -28,10 +28,6 @@ export const Home = () => {
     startResearch(query, depth);
   };
 
-  const isResearching =
-    status &&
-    status !== 'completed' &&
-    status !== 'error';
 
   const showSearch = !status && !isLoading;
   const showReport = status === 'completed' && !!report;
