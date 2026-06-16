@@ -8,10 +8,13 @@ import { truncateToTokens } from '../../utils/sanitize.js';
 import { logger } from '../../utils/logger.js';
 import { ResearchReport, ReportSection, Citation } from '../../types/index.js';
 
+import { checkCancelled } from '../graph.js';
+
 export const synthesizerNode = async (
   state: ResearchState,
   startTime: number
 ): Promise<Partial<ResearchState>> => {
+  checkCancelled(state.sessionId);
   logger.info(`[Synthesizer] Building final report from ${state.sources.length} sources`);
 
   sseRegistry.broadcast(state.sessionId, 'synthesis_started', {

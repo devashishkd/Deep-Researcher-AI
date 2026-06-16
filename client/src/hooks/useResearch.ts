@@ -251,6 +251,17 @@ export const useResearch = () => {
     setQuery('');
   }, [disconnect]);
 
+  const cancelResearch = useCallback(async () => {
+    if (sessionId) {
+      try {
+        await api.cancelResearch(sessionId);
+      } catch (err) {
+        console.error('Failed to cancel research:', err);
+      }
+    }
+    reset();
+  }, [sessionId, reset]);
+
   return {
     query,
     sessionId,
@@ -265,6 +276,7 @@ export const useResearch = () => {
     searchStats,
     confidenceScore,
     startResearch,
+    cancelResearch,
     reset,
   };
 };

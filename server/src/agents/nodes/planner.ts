@@ -8,6 +8,8 @@ import { sanitizeForPrompt } from '../../utils/sanitize.js';
 import { logger } from '../../utils/logger.js';
 import { ResearchPlan } from '../../types/index.js';
 
+import { checkCancelled } from '../graph.js';
+
 const DEPTH_CONFIG = {
   quick: { subQuestions: 3, searchQueries: 4, estimatedDuration: 30 },
   standard: { subQuestions: 5, searchQueries: 8, estimatedDuration: 90 },
@@ -15,6 +17,7 @@ const DEPTH_CONFIG = {
 };
 
 export const plannerNode = async (state: ResearchState): Promise<Partial<ResearchState>> => {
+  checkCancelled(state.sessionId);
   logger.info(`[Planner] Starting for session ${state.sessionId}`);
 
   sseRegistry.broadcast(state.sessionId, 'planning_started', {

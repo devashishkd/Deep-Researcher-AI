@@ -21,6 +21,7 @@ export const Home = () => {
     searchStats,
     confidenceScore,
     startResearch,
+    cancelResearch,
     reset,
   } = useResearch();
 
@@ -92,6 +93,7 @@ export const Home = () => {
                 liveMessages={liveMessages}
                 confidenceScore={confidenceScore}
                 searchStats={searchStats}
+                onCancel={cancelResearch}
               />
             </div>
           )}

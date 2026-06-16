@@ -59,6 +59,13 @@ const createResearchGraph = (startTime: number) => {
   return graph.compile();
 };
 
+export const checkCancelled = (sessionId: string) => {
+  const session = sessionStore.get(sessionId);
+  if (session?.status === 'cancelled') {
+    throw new Error('Research cancelled by user');
+  }
+};
+
 // ============================================================
 // Main research runner
 // ============================================================
@@ -97,6 +104,8 @@ export const runResearchAgent = async (
       recursionLimit: 25, // Safety limit
     });
 
+    checkCancelled(sessionId);
+
     // Generate PDF after report is ready
     if (finalState.report) {
       sessionStore.update(sessionId, { status: 'generating_pdf' });
@@ -106,6 +115,9 @@ export const runResearchAgent = async (
 
       try {
         const pdfPath = await pdfService.generate(finalState.report, sessionId);
+        
+        checkCancelled(sessionId);
+
         sessionStore.update(sessionId, {
           status: 'completed',
           report: finalState.report,
@@ -117,6 +129,7 @@ export const runResearchAgent = async (
           message: 'PDF ready for download!',
         });
       } catch (pdfErr) {
+        if ((pdfErr as Error).message === 'Research cancelled by user') throw pdfErr;
         // PDF failure shouldn't fail the whole research
         logger.error(`PDF generation failed: ${(pdfErr as Error).message}`);
         sessionStore.update(sessionId, {
@@ -129,6 +142,11 @@ export const runResearchAgent = async (
     logger.info(`[Graph] Research complete in ${(Date.now() - startTime) / 1000}s`);
   } catch (err: unknown) {
     const error = err as Error;
+    if (error.message === 'Research cancelled by user') {
+      logger.info(`[Graph] Research cancelled for session ${sessionId}`);
+      return;
+    }
+
     logger.error(`[Graph] Research failed: ${error.message}`);
     sessionStore.update(sessionId, {
       status: 'error',

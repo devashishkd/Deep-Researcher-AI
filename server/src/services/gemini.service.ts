@@ -12,7 +12,7 @@ const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
 ];
 
-const getModel = (modelName = 'gemini-2.5-flash') => {
+const getModel = (modelName = 'gemini-2.0-flash') => {
   return new ChatGoogleGenerativeAI({
     modelName: modelName,
     temperature: 0.7,

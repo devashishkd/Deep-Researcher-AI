@@ -9,7 +9,10 @@ import { ResearchSource } from '../../types/index.js';
 
 const MAX_URLS_TO_SCRAPE = 12;
 
+import { checkCancelled } from '../graph.js';
+
 export const scraperNode = async (state: ResearchState): Promise<Partial<ResearchState>> => {
+  checkCancelled(state.sessionId);
   logger.info(`[Scraper] Starting deep scrape of ${state.searchResults.length} URLs`);
 
   sseRegistry.broadcast(state.sessionId, 'scraping_started', {

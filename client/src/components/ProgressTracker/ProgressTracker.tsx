@@ -19,6 +19,7 @@ interface ProgressTrackerProps {
     scraped: number;
     iteration: number;
   } | null;
+  onCancel?: () => void;
 }
 
 const STEP_ICONS: Record<string, React.ReactNode> = {
@@ -44,6 +45,7 @@ export const ProgressTracker = ({
   liveMessages,
   confidenceScore,
   searchStats,
+  onCancel,
 }: ProgressTrackerProps) => {
   const logRef = useRef<HTMLDivElement>(null);
 
@@ -73,6 +75,11 @@ export const ProgressTracker = ({
             <span className="badge badge-warning">
               Iteration {searchStats.iteration}
             </span>
+          )}
+          {onCancel && (
+            <button className="btn btn-ghost btn-sm" onClick={onCancel} style={{ marginLeft: 'auto', color: 'var(--error-main)' }}>
+              Stop Research
+            </button>
           )}
         </div>
       </div>

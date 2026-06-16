@@ -30,6 +30,14 @@ export const api = {
     return res.json();
   },
 
+  cancelResearch: async (sessionId: string) => {
+    const res = await fetch(`${BASE_URL}/research/${sessionId}/cancel`, {
+      method: 'POST',
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  },
+
   downloadPdf: (sessionId: string): void => {
     window.open(`${BASE_URL}/pdf/${sessionId}`, '_blank');
   },

@@ -8,9 +8,12 @@ import { truncateToTokens } from '../../utils/sanitize.js';
 import { logger } from '../../utils/logger.js';
 import { FactCheckResult } from '../../types/index.js';
 
+import { checkCancelled } from '../graph.js';
+
 const MAX_ITERATIONS = parseInt(process.env.MAX_RESEARCH_ITERATIONS || '3', 10);
 
 export const factCheckerNode = async (state: ResearchState): Promise<Partial<ResearchState>> => {
+  checkCancelled(state.sessionId);
   logger.info(`[FactChecker] Checking facts from ${state.sources.length} sources`);
 
   sseRegistry.broadcast(state.sessionId, 'fact_check_started', {

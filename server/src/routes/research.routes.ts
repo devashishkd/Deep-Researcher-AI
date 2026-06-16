@@ -149,4 +149,32 @@ router.get('/:id/status', (req: Request, res: Response) => {
   });
 });
 
+// POST /api/research/:id/cancel — Cancel an ongoing research session
+router.post('/:id/cancel', (req: Request, res: Response) => {
+  const { id } = req.params;
+  const session = sessionStore.get(id);
+
+  if (!session) {
+    res.status(404).json({ error: 'Session not found' });
+    return;
+  }
+
+  if (session.status === 'completed' || session.status === 'error' || session.status === 'cancelled') {
+    res.status(400).json({ error: `Cannot cancel a session in '${session.status}' state` });
+    return;
+  }
+
+  // Update status to cancelled
+  sessionStore.update(id, { status: 'cancelled' });
+  
+  // Broadcast cancellation to clients
+  sseRegistry.broadcast(id, 'error', {
+    message: 'Research cancelled by user',
+  });
+
+  logger.info(`[Routes] Session ${id} cancelled by user`);
+
+  res.json({ message: 'Research cancelled successfully' });
+});
+
 export default router;

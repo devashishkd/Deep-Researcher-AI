@@ -61,7 +61,8 @@ export type ResearchStatus =
   | 'synthesizing'
   | 'generating_pdf'
   | 'completed'
-  | 'error';
+  | 'error'
+  | 'cancelled';
 
 export interface SSEMessage {
   type: string;

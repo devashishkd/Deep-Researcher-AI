@@ -10,7 +10,10 @@ import { sseRegistry } from '../../utils/cache.js';
 import { logger } from '../../utils/logger.js';
 import { ResearchSource, SearchResult } from '../../types/index.js';
 
+import { checkCancelled } from '../graph.js';
+
 export const searcherNode = async (state: ResearchState): Promise<Partial<ResearchState>> => {
+  checkCancelled(state.sessionId);
   if (!state.plan) throw new Error('No research plan available');
 
   logger.info(`[Searcher] Starting search iteration ${state.iterationCount + 1}`);
