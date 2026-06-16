@@ -3,7 +3,7 @@
 // ============================================================
 import { useEffect, useRef, useCallback } from 'react';
 import { SSEMessage } from '../types/index.js';
-
+import { api } from '../utils/api.js';
 type SSEHandler = (message: SSEMessage) => void;
 
 export const useSSE = (
