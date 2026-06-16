@@ -12,7 +12,7 @@ const safetySettings = [
   { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE },
 ];
 
-const getModel = (modelName = 'gemini-2.0-flash') => {
+const getModel = (modelName = 'gemini-2.5-flash') => {
   return new ChatGoogleGenerativeAI({
     modelName: modelName,
     temperature: 0.7,
@@ -27,12 +27,16 @@ export const geminiService = {
    * Generate text using Gemini with retry logic
    */
   generate: async (prompt: string, modelName?: string): Promise<string> => {
-    const model = getModel(modelName);
     let lastError: Error | null = null;
+    const fallbackModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+    const modelsToTry = modelName ? [modelName, modelName, modelName] : fallbackModels;
 
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
-        logger.debug(`Gemini generate attempt ${attempt}`);
+        const currentModelName = modelsToTry[attempt - 1];
+        const model = getModel(currentModelName);
+        logger.debug(`Gemini generate attempt ${attempt} with model ${currentModelName}`);
+        
         const response = await model.invoke(prompt);
         if (!response.content) throw new Error('Empty response from Gemini');
         return response.content as string;
@@ -51,19 +55,19 @@ export const geminiService = {
 
   generateJSON: async <T>(prompt: string): Promise<T> => {
     let lastError: Error | null = null;
-    
+
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         const raw = await geminiService.generate(
           prompt + '\n\nIMPORTANT: Respond with ONLY valid JSON. No markdown fences, no explanation.'
         );
-        
+
         // Clean up markdown fences
         let cleaned = raw
           .replace(/^```(?:json)?\s*/i, '')
           .replace(/```\s*$/i, '')
           .trim();
-          
+
         // Fix common LLM JSON issue: trailing commas
         cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
 
