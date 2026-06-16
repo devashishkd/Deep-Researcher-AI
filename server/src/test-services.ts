@@ -41,7 +41,7 @@ async function runTests() {
   // 3. Tavily (API Key Required)
   try {
     console.log('\n--- Testing Tavily ---');
-    const tavilyResults = await tavilyService.search('Who won the super bowl in 2024?', 'standard');
+    const tavilyResults = await tavilyService.search('Who won the super bowl in 2024?', { searchDepth: 'basic' });
     console.log(`✅ Success! Found ${tavilyResults.length} results.`);
     console.log(`   Sample: ${tavilyResults[0]?.title}`);
   } catch (err: any) {
