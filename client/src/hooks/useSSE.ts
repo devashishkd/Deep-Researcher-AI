@@ -31,7 +31,7 @@ export const useSSE = (
 
     disconnect();
 
-    const es = new EventSource(`/api/research/${sessionId}/stream`);
+    const es = api.createSSEStream(sessionId);
     eventSourceRef.current = es;
 
     // Generic message handler for all event types we care about
