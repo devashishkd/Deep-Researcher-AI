@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, Zap, BookOpen, Microscope, Globe } from 'lucide-react';
+import { Search, Microscope } from 'lucide-react';
 import { ResearchDepth } from '../../types/index.js';
 import './SearchPanel.css';
 
