@@ -8,7 +8,7 @@ import {
   ResearchSource,
   FactCheckResult,
   ResearchReport,
-} from '../types/index.ts';
+} from '../types/index.js';
 
 export const ResearchStateAnnotation = Annotation.Root({
   // Input
