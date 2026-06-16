@@ -4,18 +4,46 @@
 import { ResearchSession } from '../types/index.js';
 import { Response } from 'express';
 import { logger } from './logger.js';
+import fs from 'fs';
+import path from 'path';
+
+const DATA_FILE = path.join(process.cwd(), 'data', 'sessions.json');
+
+// Ensure data dir exists
+if (!fs.existsSync(path.dirname(DATA_FILE))) {
+  fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
+}
+
+// Load initial sessions
+let initialSessions: [string, ResearchSession][] = [];
+try {
+  if (fs.existsSync(DATA_FILE)) {
+    initialSessions = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
+  }
+} catch (e) {
+  logger.error('Failed to load sessions from disk');
+}
 
 // Session store
-const sessions = new Map<string, ResearchSession>();
+const sessions = new Map<string, ResearchSession>(initialSessions);
 
 // SSE client registry: sessionId -> list of SSE response objects
 const sseClients = new Map<string, Response[]>();
+
+const persist = () => {
+  try {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(Array.from(sessions.entries())));
+  } catch (e) {
+    logger.error('Failed to save sessions to disk');
+  }
+};
 
 export const sessionStore = {
   get: (id: string): ResearchSession | undefined => sessions.get(id),
 
   set: (session: ResearchSession): void => {
     sessions.set(session.id, session);
+    persist();
   },
 
   update: (id: string, updates: Partial<ResearchSession>): ResearchSession | null => {
@@ -23,21 +51,19 @@ export const sessionStore = {
     if (!session) return null;
     const updated = { ...session, ...updates, updatedAt: new Date() };
     sessions.set(id, updated);
+    persist();
     return updated;
   },
 
   delete: (id: string): void => {
     sessions.delete(id);
+    persist();
   },
 
-  cleanup: (): void => {
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    for (const [id, session] of sessions.entries()) {
-      if (session.updatedAt < oneHourAgo) {
-        sessions.delete(id);
-        logger.debug(`Cleaned up session ${id}`);
-      }
-    }
+  getAll: (): ResearchSession[] => {
+    return Array.from(sessions.values()).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   },
 };
 
@@ -83,5 +109,4 @@ export const sseRegistry = {
   },
 };
 
-// Run cleanup every 30 minutes
-setInterval(() => sessionStore.cleanup(), 30 * 60 * 1000);
+// Cleanup removed to persist history indefinitely

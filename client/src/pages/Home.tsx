@@ -34,8 +34,8 @@ export const Home = () => {
     status !== 'error';
 
   const showSearch = !status && !isLoading;
-  const showProgress = isLoading || isResearching;
-  const showReport = status === 'completed' && report;
+  const showReport = status === 'completed' && !!report;
+  const showProgress = (isLoading || !!status) && status !== 'error' && !showReport;
 
   return (
     <div className="home">

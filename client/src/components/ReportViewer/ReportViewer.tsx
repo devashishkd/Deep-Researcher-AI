@@ -70,15 +70,15 @@ export const ReportViewer = ({
 
           <div className="report-viewer__conf-meta">
             <div className="report-viewer__conf-stat">
-              <span className="report-viewer__conf-stat-value">{report.sections.length}</span>
+              <span className="report-viewer__conf-stat-value">{(report.sections || []).length}</span>
               <span className="report-viewer__conf-stat-label">Sections</span>
             </div>
             <div className="report-viewer__conf-stat">
-              <span className="report-viewer__conf-stat-value">{report.factChecks.length}</span>
+              <span className="report-viewer__conf-stat-value">{(report.factChecks || []).length}</span>
               <span className="report-viewer__conf-stat-label">Facts Verified</span>
             </div>
             <div className="report-viewer__conf-stat">
-              <span className="report-viewer__conf-stat-value">{report.sources.length}</span>
+              <span className="report-viewer__conf-stat-value">{(report.sources || []).length}</span>
               <span className="report-viewer__conf-stat-label">Citations</span>
             </div>
           </div>
@@ -130,7 +130,7 @@ export const ReportViewer = ({
 
       {/* Report Sections */}
       <div className="report-viewer__body">
-        {report.sections.map((section, i) => (
+        {(report.sections || []).map((section, i) => (
           <section
             key={i}
             className="report-viewer__section animate-fade-up"
@@ -146,9 +146,9 @@ export const ReportViewer = ({
                 {section.content}
               </ReactMarkdown>
             </div>
-            {section.citations.length > 0 && (
+            {(section.citations || []).length > 0 && (
               <div className="report-viewer__section-citations">
-                {section.citations.map((c) => (
+                {(section.citations || []).map((c) => (
                   <a
                     key={c.index}
                     href={c.url}
@@ -174,11 +174,11 @@ export const ReportViewer = ({
           <ShieldCheck size={20} />
           Fact-Check Analysis
           <span className="badge badge-accent" style={{ marginLeft: 'auto' }}>
-            {report.factChecks.filter((f) => f.confidence === 'high').length} high confidence
+            {(report.factChecks || []).filter((f) => f.confidence === 'high').length} high confidence
           </span>
         </div>
         <div className="report-viewer__fact-grid">
-          {report.factChecks.map((fc, i) => (
+          {(report.factChecks || []).map((fc, i) => (
             <FactBadge key={i} factCheck={fc} index={i} />
           ))}
         </div>
@@ -192,11 +192,11 @@ export const ReportViewer = ({
           <BookMarked size={20} />
           Sources & References
           <span className="badge badge-neutral" style={{ marginLeft: 'auto' }}>
-            {report.sources.length} sources
+            {(report.sources || []).length} sources
           </span>
         </div>
         <div className="report-viewer__sources-list">
-          {report.sources.map((source, i) => (
+          {(report.sources || []).map((source, i) => (
             <SourceCard key={source.url} source={source} index={i} />
           ))}
         </div>
